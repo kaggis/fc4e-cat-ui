@@ -1,4 +1,4 @@
-import { FaCheckCircle, FaList, FaPlus } from "react-icons/fa";
+import { FaCheckCircle, FaFileImport, FaList, FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import schemesImg from "@/assets/thumb_scheme.png";
 import authImg from "@/assets/thumb_auth.png";
@@ -72,18 +72,26 @@ function Assessments() {
           {authenticated && (
             <div className="d-flex justify-content-end my-2">
               <Link
-                id="assessment_form_button"
-                to={`/assessments/create`}
-                className="btn btn-light border-black mx-3"
-              >
-                <FaPlus /> Create New
-              </Link>
-              <Link
                 id="view_assessments_button"
                 to="/assessments"
-                className="btn btn-light border-black mx-3"
+                className="btn btn-light border-black me-3"
               >
-                <FaList /> View Your Assessments
+                <FaList />{" "}
+                <span className="align-middle">View your Assessments</span>
+              </Link>
+              <Link
+                id="assessment_form_button"
+                to={`/assessments/create`}
+                className="btn btn-light border-black me-3"
+              >
+                <FaPlus /> <span className="align-middle">Create New</span>
+              </Link>
+              <Link
+                id="assessment_form_button"
+                to={`/assessments/import`}
+                className="btn btn-light border-black"
+              >
+                <FaFileImport /> <span className="align-middle">Import</span>
               </Link>
             </div>
           )}

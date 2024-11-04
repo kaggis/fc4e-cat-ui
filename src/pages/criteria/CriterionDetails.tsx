@@ -5,11 +5,11 @@ import { Button, Col, Row } from "react-bootstrap";
 import { FaFile, FaTrash } from "react-icons/fa";
 
 import { useParams, useNavigate } from "react-router-dom";
-import { PrincipleModal } from "./components/PrincipleModal";
-import { AlertInfo, Principle } from "@/types";
-import { useDeletePrinciple, useGetPrinciple } from "@/api/services/principles";
+import { CriterionModal } from "./components/CriterionModal";
+import { AlertInfo, Criterion } from "@/types";
 import { DeleteModal } from "@/components/DeleteModal";
 import toast from "react-hot-toast";
+import { useDeleteCriterion, useGetCriterion } from "@/api/services/criteria";
 
 interface DeleteModalConfig {
   show: boolean;
@@ -19,7 +19,7 @@ interface DeleteModalConfig {
   itemName: string;
 }
 
-export default function PrincipleDetails() {
+export default function CriterionDetails() {
   const navigate = useNavigate();
   const params = useParams();
 
@@ -29,22 +29,22 @@ export default function PrincipleDetails() {
   const [deleteModalConfig, setDeleteModalConfig] = useState<DeleteModalConfig>(
     {
       show: false,
-      title: "Delete Principle",
-      message: "Are you sure you want to delete the following principle?",
+      title: "Delete Criterion",
+      message: "Are you sure you want to delete the following criterion?",
       itemId: "",
       itemName: "",
     },
   );
 
-  const [principle, setPrinciple] = useState<Principle>();
+  const [criterion, setCriterion] = useState<Criterion>();
   const [showUpdate, setShowUpdate] = useState(false);
-  const { data: principleData } = useGetPrinciple({
+  const { data: criterionData } = useGetCriterion({
     id: params.id!,
     token: keycloak?.token || "",
     isRegistered: registered,
   });
 
-  const mutationDelete = useDeletePrinciple(keycloak?.token || "");
+  const mutationDelete = useDeleteCriterion(keycloak?.token || "");
 
   const alert = useRef<AlertInfo>({
     message: "",
@@ -56,13 +56,13 @@ export default function PrincipleDetails() {
         .mutateAsync(deleteModalConfig.itemId)
         .catch((err) => {
           alert.current = {
-            message: "Error during principle deletion!",
+            message: "Error during criterion deletion!",
           };
           throw err;
         })
         .then(() => {
           alert.current = {
-            message: "Principle succesfully deleted.",
+            message: "Criterion succesfully deleted.",
           };
           setDeleteModalConfig({
             ...deleteModalConfig,
@@ -81,8 +81,8 @@ export default function PrincipleDetails() {
   };
 
   useEffect(() => {
-    setPrinciple(principleData);
-  }, [principleData]);
+    setCriterion(criterionData);
+  }, [criterionData]);
 
   return (
     <div className="pb-4">
@@ -97,8 +97,8 @@ export default function PrincipleDetails() {
         }}
         handleDelete={handleDeleteConfirmed}
       />
-      <PrincipleModal
-        principle={principle || null}
+      <CriterionModal
+        criterion={criterion || null}
         show={showUpdate}
         onHide={() => {
           setShowUpdate(false);
@@ -107,30 +107,30 @@ export default function PrincipleDetails() {
       <div className="cat-view-heading-block row border-bottom">
         <Col>
           <h2 className="text-muted cat-view-heading ">
-            Principle Details
-            {principle && (
+            Criterion Details
+            {criterion && (
               <p className="lead cat-view-lead">
-                Principle id:{" "}
-                <strong className="badge bg-secondary">{principle.id}</strong>
+                Criterion id:{" "}
+                <strong className="badge bg-secondary">{criterion.id}</strong>
               </p>
             )}
           </h2>
         </Col>
         <Col md="auto">
-          {principleData && (
+          {criterionData && (
             <Button
               variant="danger"
               onClick={() => {
                 setDeleteModalConfig({
                   ...deleteModalConfig,
                   show: true,
-                  itemId: principleData.id,
-                  itemName: `${principleData.label} - ${principleData.pri}`,
+                  itemId: criterionData.id,
+                  itemName: `${criterionData.label} - ${criterionData.cri}`,
                 });
               }}
             >
               <FaTrash className="me-2" />
-              Delete Principle
+              Delete Criterion
             </Button>
           )}
         </Col>
@@ -151,17 +151,17 @@ export default function PrincipleDetails() {
         </Col>
         <Col>
           <div>
-            <strong>Pri:</strong> {principle?.pri}
+            <strong>Cri:</strong> {criterion?.cri}
           </div>
           <div>
-            <strong>Label:</strong> {principle?.label}
+            <strong>Label:</strong> {criterion?.label}
           </div>
           <div>
             <div>
               <strong>Description:</strong>
             </div>
             <div>
-              <small>{principle?.description}</small>
+              <small>{criterion?.description}</small>
             </div>
           </div>
         </Col>
@@ -170,7 +170,7 @@ export default function PrincipleDetails() {
         <Button
           variant="secondary"
           onClick={() => {
-            navigate("/admin/principles");
+            navigate("/admin/criteria");
           }}
         >
           Back

@@ -10,15 +10,12 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-import {
-  useDeletePrinciple,
-  useGetPrinciples,
-} from "@/api/services/principles";
-import { AlertInfo, Principle } from "@/types";
+import { AlertInfo, Criterion } from "@/types";
 import { Link } from "react-router-dom";
-import { PrincipleModal } from "./components/PrincipleModal";
+import { CriterionModal } from "./components/CriterionModal";
 import toast from "react-hot-toast";
 import { DeleteModal } from "@/components/DeleteModal";
+import { useDeleteCriterion, useGetCriteria } from "@/api/services/criteria";
 
 type Pagination = {
   page: number;
@@ -33,11 +30,11 @@ interface DeleteModalConfig {
   itemName: string;
 }
 
-const tooltipView = <Tooltip id="tip-restore">View Principle Details</Tooltip>;
-const tooltipDelete = <Tooltip id="tip-restore">Delete Principle</Tooltip>;
+const tooltipView = <Tooltip id="tip-restore">View Criterion Details</Tooltip>;
+const tooltipDelete = <Tooltip id="tip-restore">Delete Criterion</Tooltip>;
 
-// the main component that lists the motivations in a table
-export default function Principles() {
+// the main component that lists the criteria in a table
+export default function Criteria() {
   const { keycloak, registered } = useContext(AuthContext)!;
 
   const alert = useRef<AlertInfo>({
@@ -48,14 +45,14 @@ export default function Principles() {
   const [deleteModalConfig, setDeleteModalConfig] = useState<DeleteModalConfig>(
     {
       show: false,
-      title: "Delete Principle",
-      message: "Are you sure you want to delete the following principle?",
+      title: "Delete Criterion",
+      message: "Are you sure you want to delete the following criterion?",
       itemId: "",
       itemName: "",
     },
   );
 
-  const mutationDelete = useDeletePrinciple(keycloak?.token || "");
+  const mutationDelete = useDeleteCriterion(keycloak?.token || "");
 
   const handleDeleteConfirmed = () => {
     if (deleteModalConfig.itemId) {
@@ -98,8 +95,8 @@ export default function Principles() {
     setOpts({ ...opts, page: 1, size: parseInt(evt.target.value) });
   };
 
-  // data get list of motivations
-  const { isLoading, data, refetch } = useGetPrinciples({
+  // data get list of criteria
+  const { isLoading, data, refetch } = useGetCriteria({
     size: opts.size,
     page: opts.page,
     token: keycloak?.token || "",
@@ -111,8 +108,8 @@ export default function Principles() {
     refetch();
   }, [opts, refetch]);
 
-  // get the principle data to create the table
-  const principles: Principle[] = data ? data?.content : [];
+  // get the criteria data to create the table
+  const criteria: Criterion[] = data ? data?.content : [];
 
   return (
     <div>
@@ -127,8 +124,8 @@ export default function Principles() {
         }}
         handleDelete={handleDeleteConfirmed}
       />
-      <PrincipleModal
-        principle={null}
+      <CriterionModal
+        criterion={null}
         show={showCreate}
         onHide={() => {
           setShowCreate(false);
@@ -137,8 +134,8 @@ export default function Principles() {
       <div className="cat-view-heading-block row border-bottom">
         <div className="col">
           <h2 className="text-muted cat-view-heading ">
-            Principles
-            <p className="lead cat-view-lead">Manage principles.</p>
+            Criteria
+            <p className="lead cat-view-lead">Manage criteria.</p>
           </h2>
         </div>
         <div className="col-md-auto cat-heading-right">
@@ -157,7 +154,7 @@ export default function Principles() {
           <thead>
             <tr className="table-light">
               <th>
-                <span>MTV</span>
+                <span>CRI</span>
               </th>
               <th>
                 <span>Label</span>
@@ -171,12 +168,12 @@ export default function Principles() {
               <th></th>
             </tr>
           </thead>
-          {principles.length > 0 ? (
+          {criteria.length > 0 ? (
             <tbody>
-              {principles.map((item) => {
+              {criteria.map((item) => {
                 return (
                   <tr key={item.id}>
-                    <td className="align-middle">{item.pri}</td>
+                    <td className="align-middle">{item.cri}</td>
                     <td className="align-middle">{item.label}</td>
 
                     <td className="align-middle">{item.description}</td>
@@ -188,7 +185,7 @@ export default function Principles() {
                         <OverlayTrigger placement="top" overlay={tooltipView}>
                           <Link
                             className="btn btn-light btn-sm m-1"
-                            to={`/admin/principles/${item.id}`}
+                            to={`/admin/criteria/${item.id}`}
                           >
                             <FaBars />
                           </Link>
@@ -201,7 +198,7 @@ export default function Principles() {
                                 ...deleteModalConfig,
                                 show: true,
                                 itemId: item.id,
-                                itemName: `${item.label} - ${item.pri}`,
+                                itemName: `${item.label} - ${item.cri}`,
                               });
                             }}
                           >
@@ -216,7 +213,7 @@ export default function Principles() {
             </tbody>
           ) : null}
         </Table>
-        {!isLoading && principles.length === 0 && (
+        {!isLoading && criteria.length === 0 && (
           <Alert variant="warning" className="text-center mx-auto">
             <h3>
               <FaExclamationTriangle />

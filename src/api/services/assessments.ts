@@ -243,7 +243,7 @@ export function useGetObjects({
   actorId,
 }: ApiObjects) {
   const url = actorId
-    ? `/v1/assessments/public-objects/by-type/${assessmentTypeId}/by-actor/${actorId}?size=${size}&page=${page}`
+    ? `/v2/assessments/public-objects/by-type/${assessmentTypeId}/by-actor/${actorId}?size=${size}&page=${page}`
     : `/v1/assessments/objects?size=${size}&page=${page}`;
 
   return useQuery({

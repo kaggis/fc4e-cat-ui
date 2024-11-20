@@ -21,6 +21,7 @@ import {
   RelationResponse,
 } from "@/types";
 import { CriterionResponse } from "@/types/criterion";
+import { relMtvPrincipleId } from "@/config";
 
 export const useGetMotivations = ({
   size,
@@ -353,7 +354,7 @@ export const useGetMotivationPrinciples = (
   { token, isRegistered, size }: ApiOptions,
 ) =>
   useInfiniteQuery({
-    queryKey: ["motivation-principles"],
+    queryKey: ["motivation-principles", mtvId],
     queryFn: async ({ pageParam = 1 }) => {
       const response = await APIClient(token).get<PrincipleResponse>(
         `/v1/registry/motivations/${mtvId}/principles?size=${size}&page=${pageParam}`,

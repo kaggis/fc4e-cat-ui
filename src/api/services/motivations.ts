@@ -11,6 +11,7 @@ import {
   ApiMotivations,
   ApiOptions,
   CriImp,
+  MetricAssignment,
   MetricInput,
   MetricResponse,
   Motivation,

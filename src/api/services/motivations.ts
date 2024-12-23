@@ -11,10 +11,12 @@ import {
   ApiMotivations,
   ApiOptions,
   CriImp,
-  ImperativeResponse,
+  MetricInput,
+  MetricResponse,
   Motivation,
   MotivationActorResponse,
   MotivationInput,
+  MotivationMetricResponse,
   MotivationResponse,
   MotivationTypeResponse,
   PrincipleResponse,
@@ -358,6 +360,32 @@ export const useGetMotivationPrinciples = (
     queryFn: async ({ pageParam = 1 }) => {
       const response = await APIClient(token).get<PrincipleResponse>(
         `/v1/registry/motivations/${mtvId}/principles?size=${size}&page=${pageParam}`,
+      );
+      return response.data;
+    },
+    getNextPageParam: (lastPage) => {
+      if (lastPage.number_of_page < lastPage.total_pages) {
+        return lastPage.number_of_page + 1;
+      } else {
+        return undefined;
+      }
+    },
+    onError: (error: AxiosError) => {
+      return handleBackendError(error);
+    },
+    retry: false,
+    enabled: isRegistered,
+  });
+
+export const useGetAllMotivationMetrics = (
+  mtvId: string,
+  { token, isRegistered, size }: ApiOptions,
+) =>
+  useInfiniteQuery({
+    queryKey: ["motivation-metrics", mtvId],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await APIClient(token).get<MotivationMetricResponse>(
+        `/v1/registry/motivations/${mtvId}/metric-definition?size=${size}&page=${pageParam}`,
       );
       return response.data;
     },

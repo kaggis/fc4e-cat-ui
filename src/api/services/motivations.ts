@@ -14,6 +14,8 @@ import {
   MetricAssignment,
   MetricInput,
   MetricResponse,
+  MetricTestInput,
+  MetricTestResponse,
   Motivation,
   MotivationActorResponse,
   MotivationInput,
@@ -430,6 +432,29 @@ export const useGetMotivationCriteria = (
     enabled: isRegistered,
   });
 
+export const useGetMotivationMetricTests = (
+  mtvId: string,
+  mtrId: string,
+  { token, isRegistered, size }: ApiOptions,
+) =>
+  useInfiniteQuery({
+    queryKey: ["motivation-metric-tests", mtvId, mtrId],
+    queryFn: async ({ pageParam = 100 }) => {
+      const response = await APIClient(token).get<MetricTestResponse>(
+        `/v1/registry/motivations/${mtvId}/metrics/${mtrId}/test?size=${size}&page=${pageParam}`,
+      );
+      return response.data;
+    },
+    getNextPageParam: () => {
+      return undefined;
+    },
+    onError: (error: AxiosError) => {
+      return handleBackendError(error);
+    },
+    retry: false,
+    enabled: isRegistered,
+  });
+
 export const useGetMotivationActorCriteria = (
   mtvId: string,
   actId: string,
@@ -498,6 +523,161 @@ export function useUpdateMotivationActorCriteria(
     // on change refresh motivation-actor-criteria list
     onSuccess: () => {
       queryClient.invalidateQueries(["motivation-actor-criteria"]);
+    },
+  });
+}
+
+export function useUpdateMotivationPrinciplesCriteria(
+  token: string,
+  mtvId: string,
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (putData: PrincipleCriterion[]) => {
+      return APIClient(token).put(
+        `/v1/registry/motivations/${mtvId}/principles-criteria`,
+        putData,
+      );
+    },
+    // on change refresh motivation-principle-criteria list
+    onSuccess: () => {
+      queryClient.invalidateQueries(["motivation-principles-criteria"]);
+    },
+  });
+}
+
+export function useDeleteMotivationActor(token: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ mtvId, actId }: { mtvId: string; actId: string }) => {
+      return APIClient(token).delete(
+        `/v1/registry/motivations/${mtvId}/actors/${actId}`,
+      );
+    },
+    // on success refresh motivation query (so that the deleted actor dissapears from list)
+    onSuccess: (_, params) => {
+      queryClient.invalidateQueries(["motivations", params.mtvId]);
+    },
+  });
+}
+export const useCreateMotivationPrinciple = (
+  token: string,
+  mtvId: string,
+  { pri, label, description }: PrincipleInput,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async () => {
+      const response = await APIClient(token).post<PrincipleResponse>(
+        `/v1/registry/motivations/${mtvId}/principle`,
+        {
+          principle_request: {
+            pri,
+            label,
+            description,
+          },
+          relation: relMtvPrincipleId,
+        },
+      );
+      return response.data;
+    },
+
+    {
+      onError: (error: AxiosError) => {
+        return handleBackendError(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(["motivation-principles", mtvId]);
+      },
+    },
+  );
+};
+
+export const useCreateMotivationMetric = (
+  token: string,
+  mtvId: string,
+  {
+    mtr,
+    label,
+    description,
+    type_algorithm_id,
+    type_metric_id,
+    type_benchmark_id,
+    url,
+    value_benchmark,
+  }: MetricInput,
+) => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async () => {
+      const response = await APIClient(token).post<MetricResponse>(
+        `/v1/registry/motivations/${mtvId}/metric-definition`,
+        {
+          mtr,
+          label,
+          description,
+          type_algorithm_id,
+          type_metric_id,
+          type_benchmark_id,
+          url,
+          value_benchmark,
+        },
+      );
+      return response.data;
+    },
+
+    {
+      onError: (error: AxiosError) => {
+        return handleBackendError(error);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(["motivation-metrics"]);
+        queryClient.invalidateQueries(["all-metrics"]);
+      },
+    },
+  );
+};
+
+export function useUpdateMotivationAssignMetric(
+  token: string,
+  mtvId: string,
+  criId: string,
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (putData: MetricAssignment) => {
+      return APIClient(token).put(
+        `/v1/registry/motivations/${mtvId}/criteria/${criId}/metrics`,
+        putData,
+      );
+    },
+    // on change refresh motivation criterion
+    onSuccess: () => {
+      queryClient.invalidateQueries([
+        "motivation-criterion-metric",
+        mtvId,
+        criId,
+      ]);
+    },
+  });
+}
+
+export function useUpdateMotivationMetricTests(
+  token: string,
+  mtvId: string,
+  mtrId: string,
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (putData: MetricTestInput[]) => {
+      return APIClient(token).put(
+        `/v1/registry/motivations/${mtvId}/metrics/${mtrId}/tests`,
+        putData,
+      );
+    },
+    // on change refresh motivation-metric-test
+    onSuccess: () => {
+      queryClient.invalidateQueries(["motivation-metric-tests", mtvId, mtrId]);
     },
   });
 }

@@ -34,6 +34,10 @@ import PrincipleDetails from "./pages/principles/PrincipleDetails";
 import MotivationActorCriteria from "./pages/motivations/MotivationActorCriteria";
 import AssessmentView from "./pages/assessments/AssessmentView";
 import { MotivationAssessmentEditor } from "./pages/assessments/MotivationAssessmentEditor";
+import MotivationCriteriaPrinciples from "./pages/motivations/MotivationCriteriaPrinciples";
+import Criteria from "./pages/criteria/Criteria";
+import CriterionDetails from "./pages/criteria/CriterionDetails";
+import MotivationMetricTests from "./pages/motivations/MotivationMetricTests";
 
 const queryClient = new QueryClient();
 
@@ -207,6 +211,12 @@ function App() {
                   element={<ProtectedRoute />}
                 >
                   <Route index element={<MotivationActorCriteria />} />
+                </Route>
+                <Route
+                  path="/admin/motivations/:mtvId/metrics-tests/:mtrId"
+                  element={<ProtectedRoute />}
+                >
+                  <Route index element={<MotivationMetricTests />} />
                 </Route>
                 <Route
                   path="/admin/motivations/:mtvId/templates/actors/:actId"

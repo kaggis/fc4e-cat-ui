@@ -611,7 +611,7 @@ export const useCreateMotivationMetric = (
   return useMutation(
     async () => {
       const response = await APIClient(token).post<MetricResponse>(
-        `/v1/registry/motivations/${mtvId}/metric-definition`,
+        `/v1/registry/motivations/${mtvId}/metric`,
         {
           mtr,
           label,

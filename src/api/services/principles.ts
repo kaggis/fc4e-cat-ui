@@ -13,13 +13,15 @@ export const useGetPrinciples = ({
   size,
   page,
   token,
+  sortBy,
+  sortOrder,
   isRegistered,
 }: ApiOptions) =>
   useQuery({
-    queryKey: ["principles", { size, page }],
+    queryKey: ["principles", { size, page, sortBy, sortOrder }],
     queryFn: async () => {
       const response = await APIClient(token).get<PrincipleResponse>(
-        `/v1/registry/principles?size=${size}&page=${page}`,
+        `/v1/registry/principles?size=${size}&page=${page}&sort=${sortBy}&order=${sortOrder}`,
       );
       return response.data;
     },
@@ -52,6 +54,34 @@ export const useGetPrinciple = ({
       return handleBackendError(error);
     },
     enabled: !!token && isRegistered && id !== "" && id !== undefined,
+  });
+
+export const useGetAllPrinciples = ({
+  token,
+  isRegistered,
+  size,
+  sortBy,
+}: ApiOptions) =>
+  useInfiniteQuery({
+    queryKey: ["all-principles", { size, sortBy }],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await APIClient(token).get<PrincipleResponse>(
+        `/v1/registry/principles?size=${size}&page=${pageParam}&sort=${sortBy}`,
+      );
+      return response.data;
+    },
+    getNextPageParam: (lastPage) => {
+      if (lastPage.number_of_page < lastPage.total_pages) {
+        return lastPage.number_of_page + 1;
+      } else {
+        return undefined;
+      }
+    },
+    onError: (error: AxiosError) => {
+      return handleBackendError(error);
+    },
+    retry: false,
+    enabled: isRegistered,
   });
 
 export const useCreatePrinciple = (

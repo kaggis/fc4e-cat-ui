@@ -4,7 +4,7 @@ The Compliance Assessment Toolkit will support the EOSC PID policy with services
 
 ## Configuration
 
-Before running make sure to configure appropriatelly the `src/keycloak.json` file and the `src/config.json`.
+Before running, make sure to configure appropriatelly the `src/keycloak.json` file and the `src/config.json`.
 
 This component refers to the User Interfaces based on the APIs that support the use of the APIs within websites and applications.
 

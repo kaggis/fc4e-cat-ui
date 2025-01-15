@@ -51,6 +51,7 @@ export default function MotivationActorCriteria() {
     size: 5,
     token: keycloak?.token || "",
     isRegistered: registered,
+    search: "",
   });
 
   const {

@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { handleBackendError } from "@/utils";
 import {
   ApiOptions,
-  ApiPrinciples,
+  ApiOptionsSearch,
   Principle,
   PrincipleInput,
   PrincipleResponse,
@@ -18,7 +18,7 @@ export const useGetPrinciples = ({
   sortOrder,
   search,
   isRegistered,
-}: ApiPrinciples) =>
+}: ApiOptionsSearch) =>
   useQuery({
     queryKey: ["principles", { size, page, sortBy, sortOrder, search }],
     queryFn: async () => {
